@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AppsFlyerAppID</key>
+	<string>6797943868</string>
+	<key>AppsFlyerDevKey</key>
+	<string>V8VFHFvqBDy9sDHPNFTUY3</string>
+	<key>QueenrightAPIBaseURL</key>
+	<string>https://queenright.online/v1</string>
+	<key>QueenrightPayloadKey</key>
+	<string>7a82308e7431e34fd42924c99d49d22f20762d3b17946b73320a29e259917bcc</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+</dict>
+</plist>
