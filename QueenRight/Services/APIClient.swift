@@ -32,7 +32,7 @@ enum APIConfig {
            url.host != nil {
             return url
         }
-        return URL(string: "https://queenright.online/v1")!
+        return URL(string: "https://appqueenrights.space/v1")!
     }()
 
     static let requestTimeout: TimeInterval = 20
