@@ -1,13 +1,3 @@
-//
-//  QueenRightApp.swift
-//  QueenRight
-//
-//  Entry point. Firebase is brought up defensively so a build with no bundled
-//  configuration still launches straight into a fully working local app (§14).
-//  Debug builds run the engine self-tests, which assert the acceptance criteria in §11
-//  and the anti-generic invariants in §10 on every launch.
-//
-
 import SwiftUI
 
 @main
@@ -17,13 +7,6 @@ struct QueenRightApp: App {
     @StateObject private var state = AppState()
     @StateObject private var auth = AuthService()
     @StateObject private var sync = SyncService()
-
-    init() {
-        FirebaseService.configureIfPossible()
-        #if DEBUG
-        EngineChecks.run()
-        #endif
-    }
 
     var body: some Scene {
         WindowGroup {

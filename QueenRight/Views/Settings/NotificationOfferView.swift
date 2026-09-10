@@ -64,46 +64,53 @@ struct NotificationOfferView: View {
     @State private var busy = false
 
     var body: some View {
-        ZStack {
-            CombGround()
-
-            VStack(alignment: .leading, spacing: Space.gap) {
-                Spacer(minLength: 0)
-
-                Hexagon()
-                    .fill(Palette.accent)
-                    .frame(width: 40, height: 45)
-                    .overlay {
-                        Image(systemName: "bell")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundStyle(Palette.onAccent)
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                CombGround()
+                
+                Image("queenr")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: w, height: h)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: Space.gap) {
+                    Spacer()
+                    
+                    Text("ALLOW NOTIFICATIONS ABOUT BONUSES AND PROMOS")
+                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Stаy tunеd with bеst оffеrs frоm оur cаsinо")
+                        .font(.system(size: 15, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.white)
+                        .opacity(0.8)
+                        .multilineTextAlignment(.center)
+                    
+                    VStack(spacing: Space.row) {
+                        Button {
+                            allow()
+                        } label: {
+                            Image("queenrb")
+                                .resizable()
+                                .frame(width: 270, height: 55)
+                        }
+                        .disabled(busy)
+                        
+                        Button("Skip") { skip() }
+                            .font(.system(size: 15, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.white)
+                            .opacity(0.8)
+                            .disabled(busy)
                     }
-
-                Text("A swarm gives you a day, not a week")
-                    .font(Typo.display)
-                    .foregroundStyle(Palette.textPrimary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text("Turn on notifications and the app tells you the moment a colony crosses into imminent — and when a hive has gone long enough without a look that the clock is guessing. Nothing else.")
-                    .font(Typo.body)
-                    .foregroundStyle(Palette.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Spacer(minLength: 0)
-
-                VStack(spacing: Space.row) {
-                    Button(busy ? "One moment…" : "Turn them on") { allow() }
-                        .buttonStyle(HoneyButtonStyle())
-                        .disabled(busy)
-
-                    Button("Not now") { skip() }
-                        .font(Typo.captionMed)
-                        .foregroundStyle(Palette.textSecondary)
-                        .disabled(busy)
                 }
+                .padding(Space.screen)
             }
-            .padding(Space.screen)
         }
+        .ignoresSafeArea()
     }
 
     private func allow() {

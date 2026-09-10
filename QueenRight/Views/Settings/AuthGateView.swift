@@ -28,24 +28,38 @@ struct AuthGateView: View {
     }
 
     var body: some View {
-        ZStack {
-            CombGround()
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: Space.gap) {
-                    header
-                    fields
-                    messages
-                    actions
-                    reason
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            
+            ZStack {
+                CombGround()
+                
+                Image("welcome")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: w, height: h)
+                    .ignoresSafeArea()
+                    .blur(radius: 2)
+                    .opacity(0.1)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Space.gap) {
+                        header
+                        fields
+                        messages
+                        actions
+                        reason
+                    }
+                    .padding(Space.screen)
+                    .frame(maxWidth: 520)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(Space.screen)
-                .frame(maxWidth: 520)
-                .frame(maxWidth: .infinity)
+                .scrollDismissesKeyboard(.interactively)
             }
-            .scrollDismissesKeyboard(.interactively)
+            .onValueChange(of: isSignUp) { _ in auth.clearMessages() }
         }
-        .onValueChange(of: isSignUp) { _ in auth.clearMessages() }
+        .ignoresSafeArea()
     }
 
     // MARK: - Шапка

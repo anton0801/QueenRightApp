@@ -40,38 +40,64 @@ struct OnboardingView: View {
     private let pageCount = 6
 
     var body: some View {
-        ZStack {
-            CombGround()
-
-            VStack(spacing: 0) {
-                progressFrames
-
-                ZStack {
-                    ForEach(0..<pageCount, id: \.self) { index in
-                        if index == page {
-                            pageContent(index)
-                                .transition(.asymmetric(
-                                    insertion: .move(edge: .bottom).combined(with: .opacity),
-                                    removal: .move(edge: .top).combined(with: .opacity)))
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                CombGround()
+                
+                Image(page % 2 == 0 ? "milestone" : "journey")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: w, height: h)
+                    .ignoresSafeArea()
+                    .blur(radius: 2)
+                    .opacity(0.3)
+                
+                VStack(spacing: 0) {
+                    progressFrames
+                    
+                    ZStack {
+                        ForEach(0..<pageCount, id: \.self) { index in
+                            if index == page {
+                                pageContent(index)
+                                    .transition(.asymmetric(
+                                        insertion: .move(edge: .bottom).combined(with: .opacity),
+                                        removal: .move(edge: .top).combined(with: .opacity)))
+                            }
                         }
                     }
+                    .frame(maxHeight: .infinity)
+                    .offset(y: dragOffset)
+                    .gesture(liftGesture)
+                    
+                    controls
                 }
-                .frame(maxHeight: .infinity)
-                .offset(y: dragOffset)
-                .gesture(liftGesture)
-
-                controls
+                .padding(Space.screen)
+                .padding(.vertical, 52)
+                
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(page == 0 ? "helper" : "hive")
+                            .resizable()
+                            .frame(width: 62, height: 62)
+                            .padding(.top, 52)
+                    }
+                    Spacer()
+                }
+                .padding(42)
             }
-            .padding(Space.screen)
+            .onValueChange(of: location.status) { status in
+                guard case .got(let lat, let lon) = status else { return }
+                latitude = lat
+                longitude = lon
+                placeLabel = String(format: "your position, %.3f, %.3f", lat, lon)
+                searchResults = []
+                Haptics.selection()
+            }
         }
-        .onValueChange(of: location.status) { status in
-            guard case .got(let lat, let lon) = status else { return }
-            latitude = lat
-            longitude = lon
-            placeLabel = String(format: "your position, %.3f, %.3f", lat, lon)
-            searchResults = []
-            Haptics.selection()
-        }
+        .ignoresSafeArea()
     }
 
     // MARK: - Progress: the frames still in the box

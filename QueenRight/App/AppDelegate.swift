@@ -89,11 +89,23 @@ import AppTrackingTransparency
 import UserNotifications
 import AppsFlyerLib
 
-final class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
     private let parley = Parley()
     private let courier = Courier()
     private var trackerStarted = false
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        messaging.token { token, error in
+            guard error == nil, let token = token else { return }
+            UserDefaults.standard.set(token, forKey: CodexKey.fcm)
+            UserDefaults.standard.set(token, forKey: CodexKey.push)
+        
+            UserDefaults(suiteName: Codex.suiteBoard)?.set(token, forKey: CodexKey.sharedFcm)
+
+            Task { @MainActor in await PushTokenReporter.report(token) }
+        }
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseService.configureIfPossible()
@@ -156,24 +168,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         guard !trackerStarted else { return }
         trackerStarted = true
         AppsFlyerLib.shared().start()
-    }
-}
-
-extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        messaging.token { token, error in
-            guard error == nil, let token = token else { return }
-            UserDefaults.standard.set(token, forKey: CodexKey.fcm)
-            UserDefaults.standard.set(token, forKey: CodexKey.push)
-            // Тот же ключ читает DeviceInfo.pushToken — иначе токен сохранён,
-            // но на сервер уходит пусто.
-            UserDefaults(suiteName: Codex.suiteBoard)?.set(token, forKey: CodexKey.sharedFcm)
-
-            // FCM отдаёт токен асинхронно и на первом запуске обычно ПОЗЖЕ
-            // стартовых запросов — иначе он бы просто уехал вместе с ними.
-            // Досылаем отдельно; тот же токен второй раз не отправляется.
-            Task { @MainActor in await PushTokenReporter.report(token) }
-        }
     }
 }
 

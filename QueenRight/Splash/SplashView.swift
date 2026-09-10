@@ -1,13 +1,3 @@
-//
-//  SplashView.swift
-//  QueenRight
-//
-//  Splash construction: COMB-FILL (§2 variance roll). Hexagons draw outward from the
-//  centre in the spiral bees actually build comb in, and the wordmark sets in the
-//  cleared middle. A seamless TimelineView loop — never a logo scale-and-fade.
-//  Reduce Motion shows the settled frame and crossfades out.
-//
-
 import SwiftUI
 
 struct SplashView: View {
@@ -18,22 +8,35 @@ struct SplashView: View {
     private let cell: CGFloat = 34
 
     var body: some View {
-        ZStack {
-            Palette.surface.ignoresSafeArea()
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                Palette.surface.ignoresSafeArea()
+                
+                Image("queenr")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: w, height: h)
+                    .ignoresSafeArea()
+                    .blur(radius: 2)
+                    .opacity(0.5)
 
-            if reduceMotion {
-                combCanvas(progress: 1)
-            } else {
-                TimelineView(.animation) { timeline in
-                    let t = timeline.date.timeIntervalSinceReferenceDate
-                    let phase = (t.truncatingRemainder(dividingBy: Motion.splashLoop)) / Motion.splashLoop
-                    // Ease the fill so comb accretes and settles, then repeats seamlessly.
-                    combCanvas(progress: eased(phase))
+                if reduceMotion {
+                    combCanvas(progress: 1)
+                } else {
+                    TimelineView(.animation) { timeline in
+                        let t = timeline.date.timeIntervalSinceReferenceDate
+                        let phase = (t.truncatingRemainder(dividingBy: Motion.splashLoop)) / Motion.splashLoop
+                        // Ease the fill so comb accretes and settles, then repeats seamlessly.
+                        combCanvas(progress: eased(phase))
+                    }
                 }
-            }
 
-            wordmark
+                wordmark
+            }
         }
+        .ignoresSafeArea()
     }
 
     /// Fill out, hold, and fade back so the loop has no visible seam.
@@ -102,15 +105,18 @@ struct SplashView: View {
 
     private var wordmark: some View {
         VStack(spacing: 6) {
-            Text(AppInfo.name)
-                .font(.system(size: Typo.scaled(38), weight: .semibold, design: .serif))
-                .foregroundStyle(Palette.textPrimary)
-            Text(AppInfo.tagline)
+//            Text(AppInfo.name)
+//                .font(.system(size: Typo.scaled(38), weight: .semibold, design: .serif))
+//                .foregroundStyle(Palette.textPrimary)
+            
+            Spacer()
+            Text("Loading application...")
                 .font(Typo.caption)
-                .foregroundStyle(Palette.textSecondary)
+                .foregroundStyle(.white)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(AppInfo.name). \(AppInfo.tagline)")
+        .accessibilityLabel("\(AppInfo.name). Loading application...")
+        .padding(.bottom, 24)
     }
 }
 

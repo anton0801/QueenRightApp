@@ -1,17 +1,3 @@
-//
-//  AppRoot.swift
-//  QueenRight
-//
-//  Spatial hub-and-spoke (§4): the root is the apiary as a yard, and every spoke is one
-//  level deep — hive board, frame capture, actions, settings. No tabs, and never deeper
-//  than one level.
-//
-//  СТАРТ. По решению владельца приложение не показывает содержимое, пока сервер
-//  не ответил на запрос об устройстве: ответ несёт признак авторизации, и по
-//  нему решается, вести человека на главный экран или на вход. Ожидание не
-//  бесконечное — при отсутствии связи показывается экран с повтором.
-//
-
 import SwiftUI
 
 struct AppRoot: View {
@@ -31,7 +17,6 @@ struct AppRoot: View {
         ZStack {
             content
 
-            // Сплеш держится, пока идёт загрузка.
             if showingSplash {
                 SplashView()
                     .transition(.opacity)

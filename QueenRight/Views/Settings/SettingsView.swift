@@ -1,13 +1,3 @@
-//
-//  SettingsView.swift
-//  QueenRight
-//
-//  §5.5 — ruled sections on the hex ground. APIARY, QUEENS, METHOD, ACCOUNT.
-//  QUEENS is the section that turns a settings list into visible evidence that the model
-//  has been paying attention: each colony's LEARNED laying rate against the book figure.
-//  METHOD names the constants in-app rather than linking out.
-//
-
 import SwiftUI
 
 struct SettingsView: View {
@@ -19,31 +9,46 @@ struct SettingsView: View {
     @State private var alertsAuthorized = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                CombGround()
-                ScrollView {
-                    VStack(alignment: .leading, spacing: Space.section) {
-                        apiarySection
-                        queensSection
-                        alertsSection
-                        methodSection
-                        accountSection
-                        appearanceSection
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            NavigationStack {
+                ZStack {
+                    CombGround()
+                    
+                    Image("journey")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: w, height: h)
+                        .ignoresSafeArea()
+                        .blur(radius: 2)
+                        .opacity(0.25)
+                    
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: Space.section) {
+                            apiarySection
+                                .padding(.top, 24)
+                            queensSection
+                            alertsSection
+                            methodSection
+                            accountSection
+                            appearanceSection
+                        }
+                        .padding(Space.screen)
                     }
-                    .padding(Space.screen)
                 }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }.foregroundStyle(Palette.accent)
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }.foregroundStyle(Palette.accent)
+                    }
                 }
+                .sheet(isPresented: $showingMethod) { MethodView() }
+                .sheet(isPresented: $showingAccount) { AccountView() }
             }
-            .sheet(isPresented: $showingMethod) { MethodView() }
-            .sheet(isPresented: $showingAccount) { AccountView() }
         }
+        .ignoresSafeArea()
     }
 
     // MARK: APIARY
